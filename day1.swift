@@ -169,3 +169,38 @@ struct Double: Sequence, IteratorProtocol {
 }
 
 print(Array(Double().prefix(10)))
+
+
+import Foundation
+func entries_in_dir(_ dir:URL)->[URL]{
+    let data=FileManager.default.enumerator(at: dir, includingPropertiesForKeys: [URLResourceKey.nameKey],options: [],errorHandler: nil)!
+    let res=data.allObjects as! [URL]
+    return res
+}
+print(entries_in_dir(URL(fileURLWithPath: "/Users/felix/test-ocaml")))
+
+func entries_in_dir2(_ dir:URL)  ->[URL]{
+    var files:[URL]=[]
+    let data=FileManager.default.enumerator(at: dir, includingPropertiesForKeys: [URLResourceKey.nameKey])!
+    for case let fileURL as URL in data{
+        do {
+            let file_attr=try fileURL.resourceValues(forKeys: [.isRegularFileKey])
+            if file_attr.isRegularFile!{
+                files.append(fileURL)
+            }
+        } catch {print(error,fileURL)}
+    }
+    return files
+}
+print( entries_in_dir2(URL(fileURLWithPath: "/Users/felix/test-ocaml1")))
+// check url is directory
+func fileExistsAndIsDirectory(_ url:URL) -> Bool {
+    var isDirectory:ObjCBool = false
+    let doesExist = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+    return doesExist && isDirectory.boolValue
+}
+print(fileExistsAndIsDirectory(URL(fileURLWithPath: "/Users/felix/test-ocaml")))
+func fileExistsAndIsDirectory2(_ url:URL) throws -> Bool {
+    return (try url.resourceValues(forKeys: [.isDirectoryKey])).isDirectory!
+}
+print(fileExistsAndIsDirectory(URL(fileURLWithPath: "/Users/felix/test-ocaml")))
